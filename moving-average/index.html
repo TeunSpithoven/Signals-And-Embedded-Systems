@@ -34,9 +34,10 @@
       <p>
         Calculated by moving through the samples, looking back for half the
         samplesize and looking forward for the other half.
+        The <span style="color: red;">red line</span> represents the result of a IIR moving average filter.
       </p>
-      <label for="sine-sample-size-slider">sample size</label>
-      <input type="range" min="2" max="30" value="30" step="2" id="sine-sample-size-slider">
+      <label for="sine-sample-size-slider">filter length</label>
+      <input type="range" min="2" max="22" value="4" step="2" id="sine-sample-size-slider">
       <div id="sine-average-container"></div>
     </section>
     <script src="index.js"></script>

@@ -1,7 +1,7 @@
 // Generate a sine wave
 var sampleRate = 50000;
-var noise = 30;
-var sampleSize = 10;
+var noise = 10;
+var sampleSize = 4;
 const volume = 0.6;
 const seconds = 0.01;
 const tone = 441;
@@ -72,8 +72,6 @@ function Calculate() {
   var sineCanvasWithNoise = document.createElement("canvas");
   var ctx = sineCanvasWithNoise.getContext("2d");
 
-  const canvasWithNoiseWidth = sineWaveWithNoise.length;
-  const canvasWithNoiseHeight = 200;
   sineCanvasWithNoise.width = canvasWidth;
   sineCanvasWithNoise.height = canvasHeight;
 
@@ -122,8 +120,6 @@ function Calculate() {
   var sineCanvasAverage = document.createElement("canvas");
   var ctx = sineCanvasAverage.getContext("2d");
 
-  const canvasWithNoiseAverage2Width = sineWaveAverage.length;
-  const canvasWithNoiseAverage2Height = 200;
   sineCanvasAverage.width = canvasWidth;
   sineCanvasAverage.height = canvasHeight;
 
@@ -139,6 +135,78 @@ function Calculate() {
     "sine-average-container"
   );
   sineCanvasAverageContainer.innerHTML = "";
+  sineCanvasAverageContainer.appendChild(sineCanvasAverage);
+
+  //   Calculate the infinite impulse response and plot it over
+  //   the normal moving average drawing in a different color.
+
+  //   New moving average calculation
+  var iirMovingAverage = [];
+  // loop over iedere sample
+  var prevAverage = 0;
+  for (let i = 0; i < sineWaveWithNoise.length; i++) {
+    var sum = 0;
+    var average = sineWaveWithNoise[i];
+
+    if (i === sampleSize) {
+      // bereken gemiddelde van vorige sample size aantal dingen
+      for (let addSample = 0; addSample < sampleSize; addSample++) {
+        sum += sineWaveWithNoise[i + addSample];
+      }
+      average = sum / sampleSize;
+      prevAverage = average;
+    } else if (i > sampleSize + 1) {
+      // nieuwe sample is 0.9 x vorige + 0.1 x nieuwe
+      average = prevAverage * 0.9 + sineWaveWithNoise[i] * 0.1;
+      prevAverage = average;
+    }
+
+    if (i >= sampleSize / 2) {
+      // ook terug kijken
+      for (
+        let addSample = 0 - sampleSize / 2;
+        addSample < sampleSize / 2;
+        addSample++
+      ) {
+        sum += sineWaveWithNoise[i + addSample];
+      }
+    } else {
+      // alleen vooruit kijken
+      for (let addSample = 0; addSample < sampleSize; addSample++) {
+        sum += sineWaveWithNoise[i + addSample];
+      }
+    }
+
+    iirMovingAverage.push(average);
+  }
+
+  // Display previous sine wave again.
+  var sineCanvasAverage = document.createElement("canvas");
+  var ctx = sineCanvasAverage.getContext("2d");
+
+  sineCanvasAverage.width = canvasWidth;
+  sineCanvasAverage.height = canvasHeight;
+
+  ctx.beginPath();
+  ctx.moveTo(0, 100);
+  for (let i = 0; i < sineWaveAverage.length; i++) {
+    ctx.lineTo(i, canvasHeight / 2 - sineWaveAverage[i] * 100);
+  }
+  ctx.strokeStyle = "#000000";
+  ctx.stroke();
+
+  // Display IIR moving average in red.
+  ctx.beginPath();
+  ctx.moveTo(0, 100);
+  for (let i = 0; i < iirMovingAverage.length; i++) {
+    ctx.lineTo(i, canvasHeight / 2 - iirMovingAverage[i] * 100);
+  }
+  ctx.strokeStyle = "#ff0000";
+  ctx.stroke();
+
+  var sineCanvasAverageContainer = document.getElementById(
+    "sine-average-container"
+  );
   sineCanvasAverageContainer.appendChild(sineCanvasAverage);
 }
 

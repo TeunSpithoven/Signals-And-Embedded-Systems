@@ -1,5 +1,11 @@
 canvas {
-    height: 100px;
+    height: 80px;
     width: 98vw;
     border: 1px solid black;
+}
+h1 {
+    line-height: 20px;
+}
+h2 {
+    line-height: 10px;
 }
