@@ -39,7 +39,6 @@ sineCanvasContainer.appendChild(sineCanvas);
 var sineWaveWithNoise = [];
 for (var i = 0; i < sampleRate * seconds; i++) {
   const randomAmplitude = volume - Math.floor(Math.random() * 10) / 30;
-  console.log(randomAmplitude);
   sineWaveWithNoise[i] = sineWaveAt(i, tone) * randomAmplitude;
 }
 // Display the sine wave in the sine-noise-container section
