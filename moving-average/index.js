@@ -9,35 +9,60 @@ function sineWaveAt(sampleNumber, tone) {
   return Math.sin(sampleNumber / (sampleFreq / (Math.PI * 2)));
 }
 
-var arr = [];
+var sineWave = [];
 for (var i = 0; i < sampleRate * seconds; i++) {
-  arr[i] = sineWaveAt(i, tone) * volume;
+  sineWave[i] = sineWaveAt(i, tone) * volume;
 }
 
 // Display the sine wave in the sine-container section
 var sineCanvas = document.createElement("canvas");
 var ctx = sineCanvas.getContext("2d");
 
-const canvasWidth = arr.length;
+const canvasWidth = sineWave.length;
 const canvasHeight = 200;
 sineCanvas.width = canvasWidth;
 sineCanvas.height = canvasHeight;
 
 ctx.beginPath();
 ctx.moveTo(0, 100);
-for (let i = 0; i < arr.length; i++) {
-  ctx.lineTo(i, canvasHeight / 2 - arr[i] * 100);
+for (let i = 0; i < sineWave.length; i++) {
+  ctx.lineTo(i, canvasHeight / 2 - sineWave[i] * 100);
 }
 
-// ctx.lineTo(20, 100);
-// ctx.lineTo(70, 100);
 ctx.stroke();
 
 var sineCanvasContainer = document.getElementById("sine-container");
 sineCanvasContainer.appendChild(sineCanvas);
 
 // Create a new sine wave with noise
+
+var sineWaveWithNoise = [];
+for (var i = 0; i < sampleRate * seconds; i++) {
+  const randomAmplitude = volume - Math.floor(Math.random() * 10) / 30;
+  console.log(randomAmplitude);
+  sineWaveWithNoise[i] = sineWaveAt(i, tone) * randomAmplitude;
+}
 // Display the sine wave in the sine-noise-container section
+var sineCanvasWithNoise = document.createElement("canvas");
+var ctx = sineCanvasWithNoise.getContext("2d");
+
+const canvasWithNoiseWidth = sineWave.length;
+const canvasWithNoiseHeight = 200;
+sineCanvasWithNoise.width = canvasWidth;
+sineCanvasWithNoise.height = canvasHeight;
+
+ctx.beginPath();
+ctx.moveTo(0, 100);
+for (let i = 0; i < sineWave.length; i++) {
+  ctx.lineTo(i, canvasHeight / 2 - sineWaveWithNoise[i] * 100);
+}
+
+ctx.stroke();
+
+var sineCanvasWithNoiseContainer = document.getElementById(
+  "sine-noise-container"
+);
+sineCanvasWithNoiseContainer.appendChild(sineCanvasWithNoise);
 
 // Do a moving average calculation on the sine wave with noise.
 // Display the result in the sine-moving-container section.
